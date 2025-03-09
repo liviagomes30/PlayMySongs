@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Biblioteca de Músicas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-custom text-light">
+
+<!-- Botão de Voltar no canto superior esquerdo -->
+<a href="index.jsp" class="btn btn-secondary position-absolute top-0 start-0 m-3">⬅ Voltar</a>
+
+<div class="container d-flex flex-column justify-content-center align-items-center mt-5">
+  <h2 class="text-center mb-4">📚 Biblioteca de Músicas</h2>
+
+  <div id="biblioteca" class="w-100 d-flex flex-column align-items-center"></div>
+</div>
+
+<script>
+  // função é assíncrona, ou seja, permite o uso de await dentro dela, evitando bloqueios no fluxo de execução
+  async function carregarBiblioteca() {
+    try {
+      // Faz uma requisição HTTP para o BibliotecaServlet, que retorna a lista de músicas disponíveis no servidor
+      const response = await fetch("biblioteca-servlet");
+      // Aguarda a resposta da requisição antes de prosseguir (evita que o código continue antes da resposta chegar)
+      const musicas = await response.json(); // Converte a resposta HTTP (que está em formato JSON) em um objeto JavaScript utilizável
+
+      const bibliotecaDiv = document.getElementById("biblioteca");
+      bibliotecaDiv.innerHTML = "";
+
+      if (musicas.length === 0) {
+        bibliotecaDiv.innerHTML = "<div class='alert alert-warning text-center'>🚨 Nenhuma música disponível na biblioteca.</div>";
+        return;
+      }
+
+      musicas.forEach(musica => {
+        const card = document.createElement("div");
+        card.className = "music-card text-center";
+        card.innerHTML = `
+                        <audio controls class="custom-audio">
+                            <source src="music/${musica}" type="audio/mpeg">
+                        </audio>
+                        <p class="music-title">${musica}</p>
+                    `;
+        bibliotecaDiv.appendChild(card);
+      });
+    } catch (error) {
+      console.error("Erro ao carregar biblioteca:", error);
+      document.getElementById("biblioteca").innerHTML = "<div class='alert alert-danger text-center'>❌ Erro ao carregar as músicas.</div>";
+    }
+  }
+
+  // Carregar a biblioteca ao abrir a página
+  carregarBiblioteca();
+</script>
+
+</body>
+</html>

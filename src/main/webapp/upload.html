@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <title>Enviar Música</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        function validarArquivo() {
+            const arquivoInput = document.querySelector('input[name="file"]');
+            const arquivo = arquivoInput.files[0];
+
+            if (!arquivo) {
+                exibirErro("Por favor, selecione um arquivo.");
+                return false;
+            }
+
+            // Verifica a extensão do arquivo
+            const extensao = arquivo.name.split('.').pop().toLowerCase();
+            if (extensao !== "mp3") {
+                exibirErro("Por favor, selecione um arquivo MP3.");
+                return false;
+            }
+
+            return true;
+        }
+
+        function validarFormulario() {
+            let nome = document.getElementById("nome").value.replace(/[^a-zA-Z0-9_ ]/g, "");
+            let artista = document.getElementById("artista").value.replace(/[^a-zA-Z0-9_ ]/g, "");
+            document.getElementById("nome").value = nome;
+            document.getElementById("artista").value = artista;
+
+            if (!validarArquivo()) {
+                return false;
+            }
+
+            return true;
+        }
+
+        function exibirErro(mensagem) {
+            let erroDiv = document.getElementById("mensagemErro");
+            erroDiv.innerHTML = "❌ " + mensagem;
+            erroDiv.classList.remove("d-none");
+        }
+    </script>
+</head>
+<body class="bg-custom text-light">
+
+<!-- Botão de Voltar fixado no canto superior esquerdo -->
+<a href="index.jsp" class="btn btn-secondary position-absolute top-0 start-0 m-3">⬅ Voltar</a>
+
+<div class="container d-flex flex-column justify-content-center align-items-center vh-100">
+    <div class="content-card p-4">
+        <h2 class="text-center">📤 Enviar Música</h2>
+
+        <!-- Mensagem de erro -->
+        <div id="mensagemErro" class="alert alert-danger text-center d-none mt-3" role="alert"></div>
+
+        <form action="upload-servlet" method="POST" enctype="multipart/form-data" onsubmit="return validarFormulario()">
+            <div class="mb-3">
+                <label class="form-label">Nome da Música:</label>
+                <input type="text" id="nome" name="nome" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Nome do Artista:</label>
+                <input type="text" id="artista" name="artista" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Estilo:</label>
+                <select name="estilo" class="form-select">
+                    <option value="rock">Rock</option>
+                    <option value="pop">Pop</option>
+                    <option value="jazz">Jazz</option>
+                    <option value="mpb">MPB</option>
+                    <option value="eletronica">Eletrônica</option>
+                    <option value="samba">Samba</option>
+                    <option value="hiphop">Hip Hop</option>
+                    <option value="forro">Forró</option>
+                    <option value="sertanejo">Sertanejo</option>
+                    <option value="classica">Clássica</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Arquivo MP3:</label>
+                <input type="file" name="file" accept=".mp3" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-custom w-100">Enviar</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
